@@ -1,6 +1,6 @@
 import dotenv = require('dotenv');
 import express = require('express');
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import mongoose from 'mongoose';
 import User from './models/User';
 
@@ -25,7 +25,7 @@ app.get('/users', async (req: Request, res: Response): Promise<void> => {
         const users = await User.find().exec();
         res.json(users);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao obter usuários' });
+        res.status(500).json({error: 'Erro ao obter usuários'});
     }
 });
 

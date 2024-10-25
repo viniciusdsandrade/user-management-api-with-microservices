@@ -1,6 +1,6 @@
 import dotenv = require('dotenv');
 import express = require('express');
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 import mongoose from 'mongoose';
 import User from './models/User';
 
@@ -22,12 +22,12 @@ mongoose.connect(process.env.MONGODB_URI as string)
 // Rota para criar um novo usuário
 app.post('/users', async (req: Request, res: Response): Promise<void> => {
     try {
-        const { username, password } = req.body;
-        const user = new User({ username, password });
+        const {username, password} = req.body;
+        const user = new User({username, password});
         await user.save();
         res.json(user);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar usuário' });
+        res.status(500).json({error: 'Erro ao criar usuário'});
     }
 });
 

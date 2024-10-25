@@ -2,7 +2,7 @@ import dotenv = require('dotenv');
 import express = require('express');
 import {Request, Response} from 'express';
 import mongoose from 'mongoose';
-import User from '../get-service/models/User';
+import User from './models/User';
 
 dotenv.config();
 
