@@ -1,0 +1,29 @@
+version: '3'
+services:
+  get-service:
+    build: ./get-service
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=your_mongodb_connection_string
+
+  post-service:
+    build: ./post-service
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URI=your_mongodb_connection_string
+
+  put-service:
+    build: ./put-service
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGODB_URI=your_mongodb_connection_string
+
+  delete-service:
+    build: ./delete-service
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGODB_URI=your_mongodb_connection_string
