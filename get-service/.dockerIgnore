@@ -1,0 +1,6 @@
+# get-service/.dockerignore
+
+node_modules
+.git
+.gitignore
+Dockerfile

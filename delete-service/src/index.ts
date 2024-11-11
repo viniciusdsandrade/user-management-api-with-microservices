@@ -1,6 +1,7 @@
-import dotenv = require('dotenv');
-import express = require('express');
-import {Request, Response} from 'express';
+// delete-service/src/index.ts
+
+import dotenv from 'dotenv';
+import express, {Request, Response} from 'express';
 import mongoose from 'mongoose';
 import User from './models/User';
 
@@ -9,7 +10,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3003;
 
-// Conectando ao MongoDB sem opções depreciadas
+app.use(express.json());
+
+// Conectando ao MongoDB
 mongoose.connect(process.env.MONGODB_URI as string)
     .then(() => console.log('MongoDB conectado com sucesso!'))
     .catch(err => {
@@ -27,11 +30,12 @@ app.delete('/users/:id', async (req: Request, res: Response): Promise<void> => {
             res.json({message: 'Usuário deletado com sucesso'});
         }
     } catch (error) {
+        console.error('Erro ao deletar usuário:', error);
         res.status(500).json({error: 'Erro ao deletar usuário'});
     }
 });
 
 // Iniciando o servidor
 app.listen(PORT, () => {
-    console.log(`DELETE Service running on port ${PORT}`);
+    console.log(`DELETE Service rodando na porta ${PORT}`);
 });
