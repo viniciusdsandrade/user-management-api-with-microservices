@@ -1,9 +1,11 @@
 // get-service/src/index.ts
 
 import dotenv from 'dotenv';
-import express, {Request, Response} from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
-import User from './models/User';
+import userRoutes from './routes/userRoutes';
+import { errorHandler } from './middlewares/errorHandler';
+import { Logger } from './utils/logger';
 
 dotenv.config();
 
@@ -14,29 +16,19 @@ app.use(express.json());
 
 // Conectando ao MongoDB
 mongoose.connect(process.env.MONGODB_URI as string)
-    .then(() => console.log('MongoDB conectado com sucesso!'))
+    .then(() => Logger.info('MongoDB conectado com sucesso!'))
     .catch(err => {
-        console.error('Erro ao conectar no MongoDB:', err);
+        Logger.error('Erro ao conectar no MongoDB:', err);
         process.exit(1);
     });
 
-// Rota para obter um usuário específico
-app.get('/users/:id', async (req: Request, res: Response): Promise<void> => {
-    try {
-        const user = await User.findById(req.params.id).select('-password'); // Exclui a senha
+// Rotas
+app.use('/users', userRoutes);
 
-        if (!user) {
-            res.status(404).json({error: 'Usuário não encontrado.'});
-        } else {
-            res.json(user);
-        }
-    } catch (error) {
-        console.error('Erro ao obter usuário:', error);
-        res.status(500).json({error: 'Erro ao obter usuário.'});
-    }
-});
+// Middleware de Erro
+app.use(errorHandler);
 
 // Iniciando o servidor
 app.listen(PORT, () => {
-    console.log(`GET Service rodando na porta ${PORT}`);
+    Logger.info(`GET Service rodando na porta ${PORT}`);
 });

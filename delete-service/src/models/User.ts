@@ -1,7 +1,7 @@
 // delete-service/src/models/User.ts
 
-import { Schema, model, Document, Query } from 'mongoose';
-import bcrypt from 'bcrypt';
+import {Schema, model, Document, Query} from 'mongoose';
+import {hashPassword, comparePassword} from '../services/userService';
 
 // Interface do Documento do Usuário
 export interface IUser extends Document {
@@ -13,44 +13,33 @@ export interface IUser extends Document {
 
 // Definição do Schema do Usuário
 const UserSchema = new Schema<IUser>({
-    username: { type: String, required: true },
-    password: { type: String, required: true, select: false }, // Exclui a senha por padrão nas consultas
+    username: {type: String, required: true},
+    password: {type: String, required: true, select: false}, // Exclui a senha por padrão nas consultas
 });
 
 // Middleware para hash da senha antes de salvar
-UserSchema.pre<IUser>('save', async function (next) {
+UserSchema.pre<IUser>('save', async function () {
     if (!this.isModified('password')) {
-        return next();
+        return;
     }
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        return next();
-    } catch (err) {
-        return next(err as any);
-    }
+    this.password = await hashPassword(this.password);
 });
 
 // Middleware para hash da senha antes de atualizar
-UserSchema.pre('findOneAndUpdate', async function (this: Query<IUser, IUser>, next) {
+UserSchema.pre('findOneAndUpdate', async function (this: Query<IUser, IUser>) {
     const update = this.getUpdate();
 
     if (update && typeof update === 'object') {
         if ('password' in update && update.password) {
-            try {
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(update.password, salt);
-                this.setUpdate({ ...update, password: hashedPassword });
-            } catch (err) {
-                throw err;
-            }
+            update.password = await hashPassword(update.password);
+            this.setUpdate(update);
         }
     }
 });
 
 // Método para comparar senhas
 UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-    return bcrypt.compare(candidatePassword, this.password);
+    return comparePassword(candidatePassword, this.password);
 };
 
 // Criação do Modelo
