@@ -1,8 +1,11 @@
-import dotenv = require('dotenv');
-import express = require('express');
-import {Request, Response} from 'express';
+// src/index.ts
+
+import dotenv from 'dotenv';
+import express from 'express';
 import mongoose from 'mongoose';
-import User from './models/User';
+import userRoutes from './routes/userRoutes';
+import { errorHandler } from './middlewares/errorHandler';
+import { Logger } from './utils/logger';
 
 dotenv.config();
 
@@ -11,34 +14,21 @@ const PORT = process.env.PORT || 3002;
 
 app.use(express.json());
 
-// Conectando ao MongoDB sem opções depreciadas
+// Conectando ao MongoDB
 mongoose.connect(process.env.MONGODB_URI as string)
-    .then(() => console.log('MongoDB conectado com sucesso!'))
+    .then(() => Logger.info('MongoDB conectado com sucesso!'))
     .catch(err => {
-        console.error('Erro ao conectar no MongoDB:', err);
+        Logger.error('Erro ao conectar no MongoDB:', err);
         process.exit(1);
     });
 
-// Rota para atualizar um usuário
-app.put('/users/:id', async (req: Request, res: Response): Promise<void> => {
-    try {
-        const {username, password} = req.body;
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            {username, password},
-            {new: true}
-        );
-        if (!user) {
-            res.status(404).json({error: 'Usuário não encontrado'});
-        } else {
-            res.json(user);
-        }
-    } catch (error) {
-        res.status(500).json({error: 'Erro ao atualizar usuário'});
-    }
-});
+// Rotas
+app.use('/users', userRoutes);
+
+// Middleware de Erro
+app.use(errorHandler);
 
 // Iniciando o servidor
 app.listen(PORT, () => {
-    console.log(`PUT Service running on port ${PORT}`);
+    Logger.info(`PUT Service rodando na porta ${PORT}`);
 });

@@ -1,6 +1,6 @@
 // get-service/src/services/userService.ts
 
-import User, { IUserDocument } from '../models/User';
+import User from '../models/User';
 import { IUserResponse } from '../interfaces/IUserResponse';
 
 /**

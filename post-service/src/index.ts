@@ -1,8 +1,11 @@
-import dotenv = require('dotenv');
-import express = require('express');
-import {Request, Response} from 'express';
+// src/index.ts
+
+import dotenv from 'dotenv';
+import express from 'express';
 import mongoose from 'mongoose';
-import User from './models/User';
+import userRoutes from './routes/userRoutes';
+import { errorHandler } from './middlewares/errorHandler';
+import { Logger } from './utils/logger';
 
 dotenv.config();
 
@@ -11,27 +14,21 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-// Conectando ao MongoDB sem opções depreciadas
+// Conectando ao MongoDB
 mongoose.connect(process.env.MONGODB_URI as string)
-    .then(() => console.log('MongoDB conectado com sucesso!'))
+    .then(() => Logger.info('MongoDB conectado com sucesso!'))
     .catch(err => {
-        console.error('Erro ao conectar no MongoDB:', err);
+        Logger.error('Erro ao conectar no MongoDB:', err);
         process.exit(1);
     });
 
-// Rota para criar um novo usuário
-app.post('/users', async (req: Request, res: Response): Promise<void> => {
-    try {
-        const {username, password} = req.body;
-        const user = new User({username, password});
-        await user.save();
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({error: 'Erro ao criar usuário'});
-    }
-});
+// Rotas
+app.use('/users', userRoutes);
+
+// Middleware de Erro
+app.use(errorHandler);
 
 // Iniciando o servidor
 app.listen(PORT, () => {
-    console.log(`POST Service running on port ${PORT}`);
+    Logger.info(`POST Service rodando na porta ${PORT}`);
 });
