@@ -2,7 +2,7 @@
 
 import User, {IUserDocument} from '../models/User';
 import {IUserUpdateRequest} from '../interfaces/IUserUpdateRequest';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import {IUser} from "../interfaces/IUser";
 

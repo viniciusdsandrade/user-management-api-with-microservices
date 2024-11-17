@@ -1,5 +1,4 @@
-# put-service/Dockerfile
-# Etapa 1: Usar a imagem oficial do Node.js com suporte ao TypeScript
+# Etapa 1: Usar a imagem oficial do Node.js
 FROM node:16
 
 # Etapa 2: Definir o diretório de trabalho dentro do contêiner

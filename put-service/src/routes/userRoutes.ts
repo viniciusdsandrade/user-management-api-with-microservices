@@ -1,9 +1,9 @@
 // src/routes/userRoutes.ts
 
 import express from 'express';
-import { updateUser } from '../controllers/userController';
-import { body, param } from 'express-validator';
-import { validate } from '../middlewares/validate';
+import {updateUser} from '../controllers/userController';
+import {body, param} from 'express-validator';
+import {validate} from '../middlewares/validate';
 
 const router = express.Router();
 
@@ -22,13 +22,13 @@ router.put(
             .trim()
             .notEmpty()
             .withMessage('O nome de usuário não pode ser vazio.')
-            .isLength({ min: 3 })
+            .isLength({min: 3})
             .withMessage('O nome de usuário deve ter pelo menos 3 caracteres.'),
         body('password')
             .optional()
             .notEmpty()
             .withMessage('A senha não pode ser vazia.')
-            .isLength({ min: 8 })
+            .isLength({min: 8})
             .withMessage('A senha deve ter pelo menos 8 caracteres.')
             .matches(/[a-z]/)
             .withMessage('A senha deve conter pelo menos uma letra minúscula.')
